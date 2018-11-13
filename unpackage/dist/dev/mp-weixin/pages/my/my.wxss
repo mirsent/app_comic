@@ -1,0 +1,49 @@
+
+.login {
+  height: 300rpx;
+  margin: 10px;
+  background: #FFE5DB;
+  border-radius: 8px;
+  position: relative;
+}
+.login-item {
+  height: 200rpx;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.head {
+  width: 120rpx;
+  height: 120rpx;
+  margin: 0 30rpx 0 70rpx;
+}
+.login-btn {
+  padding: 0 8px;
+  border: 1px solid #999;
+  border-radius: 5px;
+  color: #999;
+}
+.uni-list:before,
+.uni-list:after {
+  height: 0rpx;
+}
+.uni-list-cell-navigate {
+  line-height: 2em;
+}
+.uni-list .left {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  font-size: 30rpx;
+}
+.uni-list .icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}

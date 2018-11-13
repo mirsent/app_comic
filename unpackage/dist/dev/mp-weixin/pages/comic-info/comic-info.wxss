@@ -1,0 +1,229 @@
+
+page {
+  background-color: #FFF;
+}
+.banner {
+  height: 450rpx;
+  overflow: hidden;
+  position: relative;
+  background-color: #ccc;
+}
+.banner:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, .4);
+}
+.banner-img {
+  width: 100%;
+}
+.banner-title,
+.banner-info {
+  position: absolute;
+  left: 30rpx;
+  z-index: 9;
+  color: #FFF;
+}
+.banner-title {
+  bottom: 80rpx;
+  width: 90%;
+  font-size: 42rpx;
+  font-weight: bold;
+  line-height: 42rpx;
+}
+.banner-info {
+  width: calc(100% - 60rpx);
+  bottom: 20rpx;
+  font-size: 28rpx;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+}
+.banner-info .banner-type {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+}
+.type-item {
+  height: 32rpx;
+  line-height: 32rpx;
+  border: 1px solid #FFF;
+  border-radius: 2px;
+  padding: 0 3px;
+  margin-right: 5px;
+}
+.func {
+  height: 120rpx;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+}
+.func-item {
+  font-style: 32rpx;
+  width: 50%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.func-item .label,
+.func-item .btn {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.func-item .label {
+  width: 50%;
+  height: 40rpx;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+.func-item .label + .label {
+  border-left: 1px solid #e1e1e1;
+}
+.func-item .btn {
+  width: 100%;
+  height: 76rpx;
+  color: #FFF;
+  background-color: #fd7d49;
+  border-radius: 76rpx;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.func-item .icon {
+  width: 36rpx;
+  height: 36rpx;
+  margin-right: 8px;
+}
+.tabbar {
+  border-bottom: 1px solid #e1e1e1;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: space-around;
+  justify-content: space-around;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.tabbar-item {
+  width: 220rpx;
+  height: 100rpx;
+  line-height: 100rpx;
+  color: #919191;
+  text-align: center;
+}
+.tabbar-item.on {
+  color: #fd7d49;
+  border-bottom: 2px solid #fd7d49;
+}
+.body {
+  padding: 20px 15px;
+}
+.info {
+  font-size: 32rpx;
+  line-height: 1.5em;
+  margin-bottom: 20px;
+}
+.info text {
+  color: #919191;
+}
+.status {
+  color: #919191;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+}
+.status-item {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  margin-right: 20px;
+}
+.status-item .icon {
+  width: 30rpx;
+  height: 30rpx;
+  margin-right: 5px;
+}
+.status-item .icon-see {
+  height: 20rpx;
+}
+.uni-media-list {
+  padding: 3px 0;
+}
+.uni-media-list-logo {
+  width: 200rpx;
+  height: 130rpx;
+}
+.uni-media-list-body {
+  height: 120rpx;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+}
+.uni-media-list-text-top {
+  font-size: 32rpx;
+  color: #333;
+}
+.uni-media-list-text-bottom {
+  font-size: 26rpx;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+}
+.popular {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  margin-left: 20px;
+}
+.popular image {
+  width: 30rpx;
+  height: 20rpx;
+  margin-right: 5px;
+}
+.uni-list:before,
+.uni-list:after,
+.uni-list-cell:after {
+  height: 0rpx;
+}
+.go-top {
+  position: fixed;
+  right: 50rpx;
+  bottom: 50rpx;
+}
+.go-top image {
+  width: 60rpx;
+  height: 60rpx;
+}

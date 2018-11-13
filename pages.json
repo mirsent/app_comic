@@ -1,0 +1,105 @@
+{
+    "pages" : [
+        {
+            "path" : "pages/index/index",
+            "style" : {
+                "navigationBarTitleText" : "首页"
+            }
+        },
+        {
+            "path" : "pages/type/type",
+            "style" : {
+                "navigationBarTitleText" : "分类",
+                "navigationBarTextStyle" : "white",
+                "navigationBarBackgroundColor" : "#fd7d49",
+                "enablePullDownRefresh" : true
+            }
+        },
+        {
+            "path" : "pages/comic-detail/comic-detail",
+            "style" : {}
+        },
+        {
+            "path" : "pages/shelf/shelf",
+            "style" : {
+                "navigationBarTitleText" : "书架",
+                "navigationBarTextStyle" : "white",
+                "navigationBarBackgroundColor" : "#fd7d49"
+            }
+        },
+        {
+            "path" : "pages/my/my",
+            "style" : {
+                "navigationBarTitleText" : "我的"
+            }
+        },
+        {
+            "path" : "pages/release/release",
+            "style" : {}
+        },
+        {
+            "path" : "pages/comic-info/comic-info",
+            "style" : {}
+        }
+    ],
+    "condition" : {
+        "current" : 0,
+        "list" : [
+            {
+                "name" : "home",
+                "path" : "pages/index/index"
+            },
+            {
+                "name" : "type",
+                "path" : "pages/type/type"
+            },
+            {
+                "name" : "my",
+                "path" : "pages/my/my"
+            },
+            {
+                "name" : "comic-info",
+                "path" : "pages/comic-info/comic-info"
+            }
+        ]
+    },
+    "globalStyle" : {
+        // "navigationStyle": "custom",
+        "navigationBarTextStyle" : "black",
+        "navigationBarTitleText" : "漫画",
+        "navigationBarBackgroundColor" : "#F8F8F8",
+        "backgroundColor" : "#F8F8F8"
+    },
+    "tabBar" : {
+        "color" : "#bfbfbf",
+        "selectedColor" : "#FD7D49",
+        "borderStyle" : "black",
+        "backgroundColor" : "#ffffff",
+        "list" : [
+            {
+                "pagePath" : "pages/index/index",
+                "iconPath" : "static/image/tab_home.png",
+                "selectedIconPath" : "static/image/tab_home_on.png",
+                "text" : "首页"
+            },
+            {
+                "pagePath" : "pages/type/type",
+                "iconPath" : "static/image/tab_type.png",
+                "selectedIconPath" : "static/image/tab_type_on.png",
+                "text" : "分类"
+            },
+            {
+                "pagePath" : "pages/shelf/shelf",
+                "iconPath" : "static/image/tab_shelf.png",
+                "selectedIconPath" : "static/image/tab_shelf_on.png",
+                "text" : "书架"
+            },
+            {
+                "pagePath" : "pages/my/my",
+                "iconPath" : "static/image/tab_my.png",
+                "selectedIconPath" : "static/image/tab_my_on.png",
+                "text" : "我的"
+            }
+        ]
+    }
+}
