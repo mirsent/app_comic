@@ -26,33 +26,10 @@
 			};
 		},
         onLoad() {
-        	uni.showLoading();
-        	this.getList();
+        
         },
         methods: {
-            getList(type='-1') {
-            	let data = {
-            		'type': type
-            	};
-            	uni.request({
-            		url: this.$requestUrl+'get_comic_list',
-            		data: data,
-            		success: (data) => {
-            			let comicInfo = data.data;
-            			if (comicInfo.status == 1) {
-            				let list = comicInfo.data
-            				this.productList = this.reload ? list : this.productList.concat(list);
-            				this.reload = false;
-            			}
-            		},
-            		fail: (data, code) => {
-            			console.log('fail' + JSON.stringify(data));
-            		},
-            		complete: () => {
-            			uni.hideLoading();
-            		}
-            	})
-            },
+            
         }
 	}
 </script>

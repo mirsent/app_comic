@@ -64,6 +64,10 @@
             {
                 "name" : "comic-info",
                 "path" : "pages/comic-info/comic-info"
+            },
+            {
+                "name" : "comic-detail",
+                "path" : "pages/comic-detail/comic-detail"
             }
         ]
     },

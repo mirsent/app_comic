@@ -2,7 +2,7 @@
 	<view class="container">
 
 		<view class="uni-list">
-			<view class="uni-list-cell" v-for="(product,key) in productList" :key="key" @tap="goDetail(product)">
+			<view class="uni-list-cell" v-for="(product,key) in productList" :key="key" @tap="goInfo(product)">
 				<view class="uni-media-list">
 					<image class="uni-media-list-logo" :src="product.cover" mode="aspectFill"></image>
 					<view class="uni-media-list-body">
@@ -72,16 +72,13 @@
 					}
 				})
 			},
-			goDetail(e) {
+			goInfo(e) {
 				let detail = {
-					id: e.id,
+					comic_id: e.id,
 					title: e.title,
-					cover: e.cover,
-					release_type_name: e.release_type_name,
-					created_at: e.created_at
 				}
 				uni.navigateTo({
-					url: "../comic-detail/comic-detail?detailData=" + JSON.stringify(detail)
+					url: "../comic-info/comic-info?detailData=" + JSON.stringify(detail)
 				})
 			}
 		},

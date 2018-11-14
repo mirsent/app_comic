@@ -3,20 +3,16 @@
 		<view class="top">
 			<view class="login">
 				<view class="login-item">
-					<image :src="head" class="head"></image>
-					<view class="nickname login-btn" @click="login">
-						{{nickname}}
-					</view>
+					<image :src="readerInfo.head" class="head"></image>
+                    <view v-if="authed">
+                    	{{readerInfo.nickname}}
+                    </view>
+					<button class="login-btn" open-type="getUserInfo" v-else @getuserinfo="login">
+						登录
+					</button>
+                    
 				</view>
 			</view>
-            
-            <!-- <view class="uni-list" style="margin-bottom: 10px;">
-            	<view class="uni-list-cell" >
-            		<view class="uni-list-cell-navigate uni-navigate-right">
-            			{{rechargeTitle}}
-            		</view>
-            	</view>
-            </view> -->
             
             <view class="uni-list">
             	<view class="uni-list-cell" v-for="(item,index) in list" :key="index">
@@ -33,12 +29,15 @@
 </template>
 
 <script>
+    import service from '../../service.js';
 	export default {
 		data() {
 			return {
-				head: '../../static/image/user.png',
-                nickname: '登录',
-                rechargeTitle: '充值阅读币',
+                authed: false,
+                openid: '',
+                readerInfo: {
+                    head: '../../static/image/user.png',
+                },
                 list: [
                     {
                     	title: '充值',
@@ -56,27 +55,38 @@
 			};
 		},
         onLoad() {
-        	
+            let readerInfo = service.getUsers();
+            this.openid = readerInfo.openid;
+            wx.getSetting({
+            	// 检查权限
+            	success (res){
+            		if (res.authSetting['scope.userInfo']) {
+                        this.authed = true;
+            			this.readerInfo = readerInfo;
+            		}
+            	}
+            })
         },
         methods: {
-            login() {
-                uni.login({
-                	provider: 'weixin',
+            login(e) {
+                uni.request({
+                	url: this.$requestUrl+'edit_reader',
+                	method: 'POST',
+                    header: {
+                        'content-type': 'application/x-www-form-urlencoded'
+                    },
+                	data: {
+                		openid: this.openid,
+                		nickname: e.detail.userInfo.nickName,
+                        head: e.detail.userInfo.avatarUrl
+                	},
                 	success: res => {
-                        if (res.code) {
-                        	uni.request({
-                        		url: this.$requestUrl+'code_2_session',
-                        		method: 'GET',
-                        		data: {
-                                    js_code: res.code
-                                },
-                        		success: res => {
-                                    
-                                },
-                        		fail: () => {},
-                        		complete: () => {}
-                        	});
-                        }
+                        this.authed = true;
+                        this.readerInfo = res.data.data;
+                        uni.showToast({
+                        	title: '登录成功',
+                        	duration: 1500
+                        });
                     },
                 	fail: () => {},
                 	complete: () => {}
@@ -105,10 +115,14 @@
         margin: 0 30upx 0 70upx;
     }
     .login-btn{
+        font-size: 32upx;
+        margin: 0;
         padding: 0 8px;
         border: 1px solid #999;
         border-radius: 5px;
         color: #999;
+        line-height: 1.5em;
+        background-color: #FFF;
     }
     
     .uni-list:before,

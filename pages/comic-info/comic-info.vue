@@ -13,11 +13,19 @@
         
         <view class="func">
         	<view class="func-item">
-        		<view class="label" @tap="collect">
+                <view class="label" v-if="comic.is_collect">
+                	<image src="../../static/image/collect_on.png" class="icon"></image>
+                	<view class="title">已收藏</view>
+                </view>
+        		<view class="label" @tap="collect" v-else>
         			<image src="../../static/image/collect.png" class="icon"></image>
                     <view class="title">收藏</view>
         		</view>
-        		<view class="label" @tap="like">
+                <view class="label" v-if="comic.is_like">
+                	<image src="../../static/image/like_on.png" class="icon"></image>
+                	<view class="title">已点赞</view>
+                </view>
+        		<view class="label" @tap="like" v-else>
         			<image src="../../static/image/like.png" class="icon"></image>
                     <view class="title">点赞</view>
         		</view>
@@ -54,12 +62,16 @@
         
         <view class="body" v-if="isChapter">
             <view class="uni-list">
-            	<view class="uni-list-cell" hover-class="uni-list-cell-hover" v-for="(item,index) in chapterData" :key="index">
+            	<view class="uni-list-cell" hover-class="uni-list-cell-hover" v-for="(item,index) in chapterData" :key="index"
+                    @tap="readingChoose(item)">
             		<view class="uni-media-list">
             			<image class="uni-media-list-logo" :src="item.chapter_cover" v-if="item.chapter_cover" mode="aspectFill"></image>
             			<image class="uni-media-list-logo" src="../../static/image/place.png" mode="scaleToFill" v-else></image>
             			<view class="uni-media-list-body">
-            				<view class="uni-media-list-text-top">{{item.catalog_name}} {{item.chapter_title}}</view>
+            				<view class="uni-media-list-text-top">
+                                <view>{{item.catalog_name}} {{item.chapter_title}}</view>
+                                <image v-if="item.is_fee" src="../../static/image/fee.png"></image>
+                            </view>
             				<view class="uni-media-list-text-bottom uni-ellipsis">
             					<view>{{item.create_at}}</view>
             					<view class="popular">
@@ -80,9 +92,11 @@
 </template>
 
 <script>
+    import service from '../../service.js';
 	export default {
 		data() {
 			return {
+                openid: '',
                 isDetail: true,
                 isChapter: false,
                 comic: {},
@@ -93,11 +107,15 @@
 		},
         onLoad(e) {
             uni.showLoading();
-            let openid = uni.getStorageSync('openid');
+            
+            let readerInfo = service.getUsers();
+            this.openid = readerInfo.openid;
+            
         	let info = JSON.parse(e.detailData);
         	uni.setNavigationBarTitle({
         		title: info.title
         	})
+            
             uni.request({
             	url: this.$requestUrl+'get_comic_info',
             	method: 'GET',
@@ -119,6 +137,7 @@
                 this.isChapter = false;
             },
             showChapter() {
+                // 选集
                 this.isDetail = false;
                 this.isChapter = true;
                 if (!this.isChapterLoad) {
@@ -141,13 +160,100 @@
                 }
             },
             reading() {
-                let detail = {
-                	comic_id: this.comic.id,
-                	title: this.comic.title,
-                    chapter: ''
-                }
-                uni.navigateTo({
-                	url: "../comic-detail/comic-detail?detailData=" + JSON.stringify(detail)
+                let _this = this;
+                wx.getSetting({
+                    // 检查权限
+                	success (res){
+                		if (res.authSetting['scope.userInfo']) {
+                            uni.request({
+                            	url: _this.$requestUrl+'get_reading_chapter',
+                            	method: 'GET',
+                            	data: {
+                            		comic_id: _this.comic.id,
+                            		openid: _this.openid
+                            	},
+                            	success: res => {
+                            		let detail = {
+                            			comic_id: _this.comic.id,
+                            			title: _this.comic.title,
+                            			chapter: res.data.data
+                            		}
+                            		uni.navigateTo({
+                            			url: "../comic-detail/comic-detail?detailData=" + JSON.stringify(detail)
+                            		})
+                            	},
+                            	fail: () => {},
+                            	complete: () => {}
+                            });
+                		} else {
+                            uni.showModal({
+                                title: '提醒',
+                                content: '请先登录',
+                                success: function (res) {
+                                    if (res.confirm) {
+                                        uni.reLaunch({
+                                        	url: '../my/my'
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                	}
+                })
+            },
+            readingChoose(e) {
+                let _this = this;
+                wx.getSetting({
+                	// 检查权限
+                	success (res){
+                		if (res.authSetting['scope.userInfo']) {
+                            uni.request({
+                            	url: _this.$requestUrl+'check_auth',
+                            	method: 'GET',
+                            	data: {
+                                    comic_id: _this.comic.id,
+                                    chapter: e.catalog,
+                                    openid: _this.openid
+                                },
+                            	success: res => {
+                                    if (res.data.status == '-1') {
+                                    	uni.showModal({
+                                    		title: '分享',
+                                    		content: '付费阅读',
+                                    		cancelText: '取消',
+                                    		confirmText: '确认',
+                                    		success: res => {},
+                                    		fail: () => {},
+                                    		complete: () => {}
+                                    	});
+                                    } else {
+                                        let detail = {
+                                        	comic_id: _this.comic.id,
+                                        	title: _this.comic.title,
+                                        	chapter: e.catalog, // 选择章节
+                                        }
+                                        uni.navigateTo({
+                                        	url: "../comic-detail/comic-detail?detailData=" + JSON.stringify(detail)
+                                        })
+                                    }
+                                },
+                            	fail: () => {},
+                            	complete: () => {}
+                            });
+                		} else {
+                			uni.showModal({
+                				title: '提醒',
+                				content: '请先登录',
+                				success: function (res) {
+                					if (res.confirm) {
+                						uni.reLaunch({
+                							url: '../my/my'
+                						});
+                					}
+                				}
+                			});
+                		}
+                	}
                 })
             },
             like() {
@@ -157,7 +263,7 @@
                 	method: 'GET',
                 	data: {
                         comic_id: this.comic.id,
-                        openid: openid
+                        openid: this.openid
                     },
                 	success: res => {
                         if (res.data.status == 1) {
@@ -181,7 +287,7 @@
                 	method: 'GET',
                 	data: {
                 		comic_id: this.comic.id,
-                		openid: openid
+                		openid: this.openid
                 	},
                 	success: res => {
                 		if (res.data.status == 1) {
@@ -372,6 +478,12 @@
     .uni-media-list-text-top{
         font-size: 32upx;
         color: #333;
+        display: flex;
+        justify-content: space-between;
+    }
+    .uni-media-list-text-top image{
+        width: 50upx;
+        height: 50upx;
     }
     .uni-media-list-text-bottom{
         font-size: 26upx;

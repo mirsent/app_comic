@@ -43,6 +43,7 @@
 </template>
 
 <script>
+    import service from '../../service.js';
 	export default {
 		data() {
 			return {
@@ -78,21 +79,8 @@
 			};
 		},
 		onLoad() {
-            
-            //#ifdef MP-WEIXIN
-            // 查看是否授权
-            wx.getSetting({
-                success (res){
-                    if (!res.authSetting['scope.userInfo']) {
-                        uni.reLaunch({
-                        	url: '../auth/auth'
-                        });
-                    }
-                }
-            })
-            //#endif
-
 			uni.showLoading();
+            this.login();
 			this.getBanner();
 			this.getProduct();
 		},
@@ -138,7 +126,27 @@
 				uni.navigateTo({
 					url: "../comic-info/comic-info?detailData=" + JSON.stringify(detail)
 				})
-			}
+			},
+            login() {
+                uni.login({
+                	provider: 'weixin',
+                	success: res => {
+                        uni.request({
+                        	url: this.$requestUrl+'code_2_session',
+                        	method: 'GET',
+                        	data: {
+                                js_code: res.code
+                            },
+                        	success: res => {
+                                let readerInfo = res.data.data;
+                                service.addUser(readerInfo);
+                            },
+                        	fail: () => {},
+                        	complete: () => {}
+                        });
+                    }
+                });
+            }
 		},
 		onShareAppMessage() {
 			return {
