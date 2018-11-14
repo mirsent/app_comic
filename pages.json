@@ -40,6 +40,10 @@
         {
             "path" : "pages/comic-info/comic-info",
             "style" : {}
+        },
+        {
+            "path" : "pages/auth/auth",
+            "style" : {}
         }
     ],
     "condition" : {
