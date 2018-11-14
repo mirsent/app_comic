@@ -1,0 +1,20 @@
+<template name="1e8539b0">
+  <view class="_view data-v-0026306a">
+    <view class="_view data-v-0026306a top">
+      <view class="_view data-v-0026306a login">
+        <view class="_view data-v-0026306a login-item">
+          <image src="{{head}}" class="_image data-v-0026306a head"></image>
+          <view class="_view data-v-0026306a nickname login-btn" bindtap="handleProxy" data-eventid="{{'NR8-0'}}" data-comkey="{{$k}}"> {{nickname}} </view>
+        </view>
+      </view>
+      <view class="_view data-v-0026306a uni-list">
+        <view class="_view data-v-0026306a uni-list-cell" wx:key="index" key="{{index}}" wx:for="{{list}}" wx:for-index="index" wx:for-item="item">
+          <view class="_view data-v-0026306a uni-list-cell-navigate uni-navigate-right">
+            <view class="_view data-v-0026306a left">
+              <image src="{{item.icon}}" class="_image data-v-0026306a icon"></image> {{item.title}} </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>

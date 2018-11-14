@@ -1,0 +1,73 @@
+<template name="3db9c2a8">
+  <view class="_view data-v-e24be22c">
+    <view class="_view data-v-e24be22c banner">
+      <image class="_image data-v-e24be22c banner-img" src="{{comic.cover}}" mode="scaleToFill"></image>
+      <view class="_view data-v-e24be22c banner-title">{{comic.title}}</view>
+      <view class="_view data-v-e24be22c banner-info">
+        <view class="_view data-v-e24be22c banner-type">
+          <view class="_view data-v-e24be22c type-item" wx:key="index" key="{{index}}" wx:for="{{comic.types}}" wx:for-index="index" wx:for-item="type">{{type}}</view>
+        </view>
+        <view class="_view data-v-e24be22c banner-status">{{comic.s_serial_name}}/更新至{{comic.total_chapter}}话</view>
+      </view>
+    </view>
+    <view class="_view data-v-e24be22c func">
+      <view class="_view data-v-e24be22c func-item">
+        <view class="_view data-v-e24be22c label" bindtap="handleProxy" data-eventid="{{'71d-0'}}" data-comkey="{{$k}}">
+          <image src="../../static/image/collect.png" class="_image data-v-e24be22c icon"></image>
+          <view class="_view data-v-e24be22c title">收藏</view>
+        </view>
+        <view class="_view data-v-e24be22c label" bindtap="handleProxy" data-eventid="{{'8VH-1'}}" data-comkey="{{$k}}">
+          <image src="../../static/image/like.png" class="_image data-v-e24be22c icon"></image>
+          <view class="_view data-v-e24be22c title">点赞</view>
+        </view>
+      </view>
+      <view class="_view data-v-e24be22c func-item">
+        <view class="_view data-v-e24be22c btn" bindtap="handleProxy" data-eventid="{{'DQN-2'}}" data-comkey="{{$k}}">
+          <image src="../../static/image/book.png" class="_image data-v-e24be22c icon"></image>
+          <view class="_view data-v-e24be22c title">开始阅读</view>
+        </view>
+      </view>
+    </view>
+    <view class="_view data-v-e24be22c tabbar">
+      <view class="_view data-v-e24be22c tabbar-item {{[isDetail ? 'on' : '']}}" bindtap="handleProxy" data-eventid="{{'gE3-3'}}" data-comkey="{{$k}}">详情</view>
+      <view class="_view data-v-e24be22c tabbar-item {{[isChapter ? 'on' : '']}}" bindtap="handleProxy" data-eventid="{{'byq-4'}}" data-comkey="{{$k}}">选集</view>
+    </view>
+    <view class="_view data-v-e24be22c body" wx:if="{{isDetail}}">
+      <view class="_view data-v-e24be22c info">
+        <text class="_text data-v-e24be22c">简介：</text> {{comic.brief}} </view>
+      <view class="_view data-v-e24be22c status">
+        <view class="_view data-v-e24be22c status-item">
+          <image src="../../static/image/see_on.png" class="_image data-v-e24be22c icon icon-see"></image>
+          <view class="_view data-v-e24be22c title">总浏览{{comic.popularity}}</view>
+        </view>
+        <view class="_view data-v-e24be22c status-item">
+          <image src="../../static/image/like_on.png" class="_image data-v-e24be22c icon"></image>
+          <view class="_view data-v-e24be22c title">{{comic.heat}}人点赞</view>
+        </view>
+      </view>
+    </view>
+    <view class="_view data-v-e24be22c body" wx:if="{{isChapter}}">
+      <view class="_view data-v-e24be22c uni-list">
+        <view class="_view data-v-e24be22c uni-list-cell" hover-class="uni-list-cell-hover" wx:key="index" key="{{index}}" wx:for="{{chapterData}}" wx:for-index="index" wx:for-item="item">
+          <view class="_view data-v-e24be22c uni-media-list">
+            <image class="_image data-v-e24be22c uni-media-list-logo" src="{{item.chapter_cover}}" wx:if="{{item.chapter_cover}}" mode="aspectFill"></image>
+            <image class="_image data-v-e24be22c uni-media-list-logo" src="../../static/image/place.png" mode="scaleToFill" wx:else></image>
+            <view class="_view data-v-e24be22c uni-media-list-body">
+              <view class="_view data-v-e24be22c uni-media-list-text-top">{{item.catalog_name}} {{item.chapter_title}}</view>
+              <view class="_view data-v-e24be22c uni-media-list-text-bottom uni-ellipsis">
+                <view class="_view data-v-e24be22c">{{item.create_at}}</view>
+                <view class="_view data-v-e24be22c popular">
+                  <image src="../../static/image/see.png" class="_image data-v-e24be22c"></image>
+                  <view class="_view data-v-e24be22c">{{item.popularity}}</view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="_view data-v-e24be22c go-top" hidden="{{!(isToUp)}}" bindtap="handleProxy" data-eventid="{{'94B-5'}}" data-comkey="{{$k}}">
+        <image src="../../static/image/top.png" class="_image data-v-e24be22c"></image>
+      </view>
+    </view>
+  </view>
+</template>

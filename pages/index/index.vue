@@ -8,7 +8,7 @@
 				</view>
 			</swiper-item>
 		</swiper>
-
+        
 		<view class="nav">
 			<view class="nav-item" v-for="(nav, index) in navData" :key="index">
 				<image :src="nav.img" class="img"></image>
@@ -28,8 +28,7 @@
 				</view>
 			</view>
 			<view class="list-body">
-				<view class="product" v-for="(product,index) in type.products" :key="index"
-                    @tap="goInfo(product)">
+				<view class="product" v-for="(product,index) in type.products" :key="index" @tap="goInfo(product)">
 					<image :src="product.cover" mode="scaleToFill" class="product-img"></image>
 					<view class="product-title uni-ellipsis">
 						{{product.title}}
@@ -78,61 +77,75 @@
 				productData: []
 			};
 		},
-        onLoad() {
-            uni.showLoading();
-        	this.getBanner();
-            this.getProduct();
-        },
+		onLoad() {
+            
+            //#ifdef MP-WEIXIN
+            // 查看是否授权
+            wx.getSetting({
+                success (res){
+                    if (!res.authSetting['scope.userInfo']) {
+                        uni.reLaunch({
+                        	url: '../auth/auth'
+                        });
+                    }
+                }
+            })
+            //#endif
+
+			uni.showLoading();
+			this.getBanner();
+			this.getProduct();
+		},
 		methods: {
 			getBanner() {
-                uni.request({
-                	url: this.$requestUrl+'get_comic_banner',
-                	method: 'GET',
-                	success: res => {
-                        this.bannerData = res.data.data;
-                    },
-                	fail: () => {},
-                	complete: () => {}
-                });
+				uni.request({
+					url: this.$requestUrl + 'get_comic_banner',
+					method: 'GET',
+					success: res => {
+						this.bannerData = res.data.data;
+					},
+					fail: () => {},
+					complete: () => {}
+				});
 			},
-            getProduct() {
-                uni.request({
-                	url: this.$requestUrl+'get_comic_by_release',
-                	method: 'GET',
-                	success: res => {
-                        this.productData = res.data.data;
-                    },
-                	fail: () => {},
-                	complete: () => {
-                        uni.hideLoading();
-                    }
-                });
-            },
-            goList(e) {
-                let detail = {
-                	release_type_id: e.release_type_id,
-                    release_type_name: e.release_type_name
-                }
-                uni.navigateTo({
-                	url: "../release/release?detailData=" + JSON.stringify(detail)
-                })
-            },
-            goInfo(e) {
-                let detail = {
-                    comic_id: e.id,
-                    title: e.title
-                }
-                uni.navigateTo({
-                	url: "../comic-info/comic-info?detailData=" + JSON.stringify(detail)
-                })
-            }
+			getProduct() {
+				uni.request({
+					url: this.$requestUrl + 'get_comic_by_release',
+					method: 'GET',
+					success: res => {
+						this.productData = res.data.data;
+					},
+					fail: () => {},
+					complete: () => {
+						uni.hideLoading();
+					}
+				});
+			},
+			goList(e) {
+				let detail = {
+					release_type_id: e.release_type_id,
+					release_type_name: e.release_type_name
+				}
+				uni.navigateTo({
+					url: "../release/release?detailData=" + JSON.stringify(detail)
+				})
+			},
+			goInfo(e) {
+				let detail = {
+					comic_id: e.id,
+					title: e.title
+				}
+				uni.navigateTo({
+					url: "../comic-info/comic-info?detailData=" + JSON.stringify(detail)
+				})
+			}
 		},
-        onShareAppMessage() {
-        	return {
-        		title: '漫画',
-        		path: '/pages/index/index'
-        	}
-        },
+		onShareAppMessage() {
+			return {
+				title: '漫画',
+				path: '/pages/index/index'
+			}
+		},
 	}
 </script>
 

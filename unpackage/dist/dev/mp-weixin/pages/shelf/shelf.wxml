@@ -1,0 +1,1 @@
+<import src="/pages/shelf/shelf.vue.wxml" /><template is="05300244" data="{{ ...$root['0'], $root }}"/>
