@@ -63,11 +63,13 @@
             },
             {
                 "name" : "comic-info",
-                "path" : "pages/comic-info/comic-info"
+                "path" : "pages/comic-info/comic-info",
+                "query": "detailData={\"comic_id\":\"1\",\"title\":\"怪童\"}"
             },
             {
                 "name" : "comic-detail",
-                "path" : "pages/comic-detail/comic-detail"
+                "path" : "pages/comic-detail/comic-detail",
+                "query": "detailData={\"comic_id\":\"1\",\"title\":\"怪童\",\"chapter\":\"1\"}"
             }
         ]
     },

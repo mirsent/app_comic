@@ -69,7 +69,7 @@
             			<image class="uni-media-list-logo" src="../../static/image/place.png" mode="scaleToFill" v-else></image>
             			<view class="uni-media-list-body">
             				<view class="uni-media-list-text-top">
-                                <view>{{item.catalog_name}} {{item.chapter_title}}</view>
+                                <view>{{item.catalog_name}}</view>
                                 <image v-if="item.is_fee" src="../../static/image/fee.png"></image>
                             </view>
             				<view class="uni-media-list-text-bottom uni-ellipsis">
@@ -88,14 +88,30 @@
             	<image src="../../static/image/top.png"></image>
             </view>
         </view>
+        
+        <modalShare @close="closeModal">
+            
+        </modalShare>
 	</view>
 </template>
 
 <script>
     import service from '../../service.js';
+    import modalShare from '../../components/modal-share.vue';
+    
 	export default {
+        components: {
+        	modalShare
+        },
 		data() {
 			return {
+                // modal
+                titleText: '',
+                contentText: '',
+                cancelText: '取消',
+                confirmText: '确定',
+                modalShow: false,
+                
                 openid: '',
                 isDetail: true,
                 isChapter: false,
@@ -137,7 +153,6 @@
                 this.isChapter = false;
             },
             showChapter() {
-                // 选集
                 this.isDetail = false;
                 this.isChapter = true;
                 if (!this.isChapterLoad) {
@@ -162,7 +177,6 @@
             reading() {
                 let _this = this;
                 wx.getSetting({
-                    // 检查权限
                 	success (res){
                 		if (res.authSetting['scope.userInfo']) {
                             uni.request({
@@ -204,7 +218,6 @@
             readingChoose(e) {
                 let _this = this;
                 wx.getSetting({
-                	// 检查权限
                 	success (res){
                 		if (res.authSetting['scope.userInfo']) {
                             uni.request({
@@ -217,15 +230,11 @@
                                 },
                             	success: res => {
                                     if (res.data.status == '-1') {
-                                    	uni.showModal({
-                                    		title: '分享',
-                                    		content: '付费阅读',
-                                    		cancelText: '取消',
-                                    		confirmText: '确认',
-                                    		success: res => {},
-                                    		fail: () => {},
-                                    		complete: () => {}
-                                    	});
+                                        // 限制阅读
+                                        let comicInfo = res.data.data;
+                                        _this.titleText = '精彩章节订阅';
+                                        _this.contentText = '转发'+comicInfo.pre_chapter_share+'名好友即可阅读';
+                                    	_this.modalShow = true;
                                     } else {
                                         let detail = {
                                         	comic_id: _this.comic.id,
@@ -308,7 +317,24 @@
                 uni.pageScrollTo({
                 	scrollTop: 0,
                 })
+            },
+            closeModal() {
+            	this.modalShow = false;
             }
+        },
+        onShareAppMessage: (res) => {
+            let openid = '';
+            let imageUrl = '';
+        	if (res.from === 'button') {
+        		let readerInfo = service.getUsers();
+                openid = readerInfo.openid;
+                imageUrl = 'http://img.super-dreamers.com/xqmall/images/6c38bdbf-e78c-448a-900a-89cedf2ec459.jpg@75Q';
+        	}
+        	return {
+        		title: '漫画',
+        		path: '/pages/comic-info/comic-info?openid='+openid,
+        		imageUrl: imageUrl
+        	}
         }
 	}
 </script>
