@@ -89,7 +89,7 @@
             </view>
         </view>
         
-        <modalShare @close="closeModal">
+        <modalShare @close="closeModal" @note="noteShare">
             
         </modalShare>
 	</view>
@@ -111,6 +111,12 @@
                 cancelText: '取消',
                 confirmText: '确定',
                 modalShow: false,
+                noteShow: true,
+                
+                // 分享章节封面
+                shareChapter: '',
+                shareCover: '',
+                needShare: '',
                 
                 openid: '',
                 isDetail: true,
@@ -132,22 +138,57 @@
         		title: info.title
         	})
             
-            uni.request({
-            	url: this.$requestUrl+'get_comic_info',
-            	method: 'GET',
-            	data: {
-                    comic_id: info.comic_id
-                },
-            	success: res => {
-                    this.comic = res.data.data;
-                },
-            	fail: () => {},
-            	complete: () => {
-                    uni.hideLoading();
-                }
-            });
+            this.getComicInfo(info.comic_id);
+        },
+        onShow() {
+            if (this.needShare == 1) {
+            	this.modalShow = false;
+            } else {
+                this.needShare = this.needShare-1;
+                this.contentText = '转发'+this.needShare+'名好友即可阅读';
+            }
+        },
+        onHide() {
+        	if (this.modalShow) {
+        		this.noteShare();
+        	}
         },
         methods: {
+            noteShare(){
+                // 记录分享次数
+                this.noteShow = false;
+                uni.request({
+                	url: this.$requestUrl+'share_help',
+                	method: 'GET',
+                	data: {
+                        comic_id: this.comic.comic_id,
+                        chapter: this.shareChapter,
+                        openid: this.openid
+                    },
+                	success: res => {
+                        console.log(res);
+                    }
+                });
+            },
+            getComicInfo(comicId){
+                uni.request({
+                	url: this.$requestUrl+'get_comic_info',
+                	method: 'POST',
+                    header: {
+                        'content-type': 'application/x-www-form-urlencoded'
+                    },
+                	data: {
+                		comic_id: comicId
+                	},
+                	success: res => {
+                		this.comic = res.data.data;
+                	},
+                	fail: () => {},
+                	complete: () => {
+                		uni.hideLoading();
+                	}
+                });
+            },
             showDetail() {
                 this.isDetail = true;
                 this.isChapter = false;
@@ -161,7 +202,7 @@
                 		url: this.$requestUrl+'get_comic_chapter',
                 		method: 'GET',
                 		data: {
-                            comic_id: this.comic.id
+                            comic_id: this.comic.comic_id
                         },
                 		success: res => {
                             this.isChapterLoad = true;
@@ -183,13 +224,14 @@
                             	url: _this.$requestUrl+'get_reading_chapter',
                             	method: 'GET',
                             	data: {
-                            		comic_id: _this.comic.id,
+                            		comic_id: _this.comic.comic_id,
                             		openid: _this.openid
                             	},
                             	success: res => {
                             		let detail = {
-                            			comic_id: _this.comic.id,
+                            			comic_id: _this.comic.comic_id,
                             			title: _this.comic.title,
+                                        cover: _this.comic.cover,
                             			chapter: res.data.data
                             		}
                             		uni.navigateTo({
@@ -220,11 +262,12 @@
                 wx.getSetting({
                 	success (res){
                 		if (res.authSetting['scope.userInfo']) {
+                            uni.showLoading();
                             uni.request({
                             	url: _this.$requestUrl+'check_auth',
                             	method: 'GET',
                             	data: {
-                                    comic_id: _this.comic.id,
+                                    comic_id: _this.comic.comic_id,
                                     chapter: e.catalog,
                                     openid: _this.openid
                                 },
@@ -232,13 +275,18 @@
                                     if (res.data.status == '-1') {
                                         // 限制阅读
                                         let comicInfo = res.data.data;
+                                        _this.needShare = comicInfo.need_share;
+                                        _this.noteShow = true; // 重置note按钮状态
                                         _this.titleText = '精彩章节订阅';
-                                        _this.contentText = '转发'+comicInfo.pre_chapter_share+'名好友即可阅读';
+                                        _this.contentText = '转发'+_this.needShare+'名好友即可阅读';
+                                        _this.shareCover = comicInfo.chapter_cover; // 章节封面
+                                        _this.shareChapter = e.catalog; // 需要解除限制的章节
                                     	_this.modalShow = true;
                                     } else {
                                         let detail = {
-                                        	comic_id: _this.comic.id,
+                                        	comic_id: _this.comic.comic_id,
                                         	title: _this.comic.title,
+                                            cover: _this.comic.cover,
                                         	chapter: e.catalog, // 选择章节
                                         }
                                         uni.navigateTo({
@@ -247,7 +295,9 @@
                                     }
                                 },
                             	fail: () => {},
-                            	complete: () => {}
+                            	complete: () => {
+                                    uni.hideLoading();
+                                }
                             });
                 		} else {
                 			uni.showModal({
@@ -271,7 +321,7 @@
                 	url: this.$requestUrl+'like',
                 	method: 'GET',
                 	data: {
-                        comic_id: this.comic.id,
+                        comic_id: this.comic.comic_id,
                         openid: this.openid
                     },
                 	success: res => {
@@ -295,7 +345,7 @@
                 	url: this.$requestUrl+'collect',
                 	method: 'GET',
                 	data: {
-                		comic_id: this.comic.id,
+                		comic_id: this.comic.comic_id,
                 		openid: this.openid
                 	},
                 	success: res => {
@@ -322,19 +372,28 @@
             	this.modalShow = false;
             }
         },
-        onShareAppMessage: (res) => {
-            let openid = '';
-            let imageUrl = '';
+        onShareAppMessage(res) {
+            let title = this.comic.title;
+            let imageUrl = this.comic.cover;
+            
+            let detail = {
+            	openid: this.openid,
+                comic_id: this.comic.comic_id,
+                title: title
+            }
+            
         	if (res.from === 'button') {
-        		let readerInfo = service.getUsers();
-                openid = readerInfo.openid;
-                imageUrl = 'http://img.super-dreamers.com/xqmall/images/6c38bdbf-e78c-448a-900a-89cedf2ec459.jpg@75Q';
+                // 限制阅读分享
+                detail.share_chapter = this.shareChapter; // 开通章节
+                detail.help = 1;
+                imageUrl = this.shareCover;
         	}
-        	return {
-        		title: '漫画',
-        		path: '/pages/comic-info/comic-info?openid='+openid,
-        		imageUrl: imageUrl
-        	}
+            console.log(JSON.stringify(detail));
+            return {
+            	title: title,
+            	imageUrl: imageUrl,
+            	path: '/pages/comic-info/comic-info?detailData=' + JSON.stringify(detail),
+            }
         }
 	}
 </script>

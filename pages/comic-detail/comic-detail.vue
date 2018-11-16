@@ -11,7 +11,7 @@
 			<button type="default" @tap="next">下一章</button>
 		</view>
         
-        <modalShare @close="closeModal"></modalShare>
+        <modalShare @close="closeModal" @note="noteShare"></modalShare>
 	</view>
 </template>
 
@@ -30,6 +30,11 @@
                 cancelText: '取消',
                 confirmText: '确定',
                 modalShow: false,
+                noteShow: true,
+                
+                // 分享
+                shareCover: '',
+                shareChapter: '',
                 
 				openid: '',
 				imgPrefix: '',
@@ -39,14 +44,9 @@
 				imgs: []
 			}
 		},
-		onShareAppMessage() {
-			return {
-				title: this.comic.title,
-				path: '/pages/comic-detail/comic-detail?detailData=' + JSON.stringify(this.comic)
-			}
-		},
 		onLoad(e) {
 			uni.showLoading();
+            
 			let readerInfo = service.getUsers();
 			this.openid = readerInfo.openid;
 			this.imgPrefix = this.$imgUrl; // 图片前缀
@@ -54,12 +54,31 @@
 			let comicInfo = JSON.parse(e.detailData);
 			this.comic = comicInfo;
 
-			this.chapterIndex = comicInfo.chapter - 1; // 当前章节
+			this.chapterIndex = comicInfo.chapter - 1; //picker选中项
 
 			this.reading();
 			this.get_chapter();
 		},
+        onShow() {
+        	this.modalShow = false;
+        },
 		methods: {
+            noteShare(){
+            	// 记录分享次数
+            	this.noteShow = false;
+            	uni.request({
+            		url: this.$requestUrl+'share_help',
+            		method: 'GET',
+            		data: {
+            			comic_id: this.comic.comic_id,
+            			chapter: this.shareChapter,
+            			openid: this.openid
+            		},
+            		success: res => {
+            			console.log(res);
+            		}
+            	});
+            },
 			get_chapter() {
 				uni.request({
 					url: this.$requestUrl + 'get_comic_chapter',
@@ -76,7 +95,7 @@
 					}
 				});
 			},
-			reading(url) {
+			reading() {
 				uni.request({
 					url: this.$requestUrl + 'reading',
 					method: 'GET',
@@ -106,9 +125,9 @@
 			chapterChange(e) {
 				let chapterCur = parseInt(e.detail.value);
                 this.readingNext(this.comic.comic_id, chapterCur, this.openid);
-                console.log(this.comic.chapter)
 			},
 			readingNext(comicId, chapter, openid) {
+                uni.showLoading();
 				uni.request({
 					url: this.$requestUrl + 'reading_next',
 					method: 'GET',
@@ -121,9 +140,11 @@
 						if (res.data.status == '-1') {
                             // 限制阅读
                             let comicInfo = res.data.data;
-                            console.log(comicInfo);
+                            this.noteShow = true; // 重置note按钮状态
 							this.titleText = '精彩章节订阅';
-							this.contentText = '转发'+comicInfo.pre_chapter_share+'名好友即可阅读';
+							this.contentText = '转发'+comicInfo.need_share+'名好友即可阅读';
+                            this.shareCover = comicInfo.chapter_cover; // 章节封面
+                            this.shareChapter = parseInt(chapter)+1; // 需要解除限制的章节
 							this.modalShow = true;
 						} else {
 							let comicInfo = res.data.data;
@@ -131,6 +152,7 @@
 								title: this.comic.title + ' ' + comicInfo.chapter_title
 							})
 							this.comic.chapter = parseInt(this.comic.chapter) + 1;
+                            this.chapterIndex = chapter; // picker选中项
 							this.imgs = this.imgs.concat(comicInfo.comics);
 						}
 					},
@@ -145,14 +167,37 @@
             closeModal() {
                 this.modalShow = false;
             }
-		}
+		},
+        onShareAppMessage(res) {
+        	let title = this.comic.title;
+        	let imageUrl = this.comic.cover;
+            
+            let detail = {
+            	openid: this.openid,
+            	comic_id: this.comic.comic_id,
+            	title: title
+            }
+            
+        	if (res.from === 'button') {
+        		// 限制阅读分享
+        		detail.share_chapter = this.shareChapter; // 开通章节
+                detail.help = 1;
+        		imageUrl = this.shareCover;
+        	}
+            console.log(JSON.stringify(detail));
+        	return {
+        		title: title,
+        		imageUrl: imageUrl,
+        		path: '/pages/comic-info/comic-info?detailData=' + JSON.stringify(detail),
+        	}
+        },
 	}
 </script>
 
 <style>
 	.page {
 		background: #efeff4;
-		padding: 0 30upx;
+		padding: 0 10upx;
 	}
 
 	.article-meta {

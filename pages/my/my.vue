@@ -55,14 +55,15 @@
 			};
 		},
         onLoad() {
+            let _this = this;
             let readerInfo = service.getUsers();
             this.openid = readerInfo.openid;
             wx.getSetting({
             	// 检查权限
             	success (res){
             		if (res.authSetting['scope.userInfo']) {
-                        this.authed = true;
-            			this.readerInfo = readerInfo;
+                        _this.authed = true;
+            			_this.readerInfo = readerInfo;
             		}
             	}
             })
@@ -92,7 +93,13 @@
                 	complete: () => {}
                 });
             }
-        }
+        },
+        onShareAppMessage() {
+        	return {
+        		title: '漫画',
+        		path: '/pages/index/index'
+        	}
+        },
 	}
 </script>
 

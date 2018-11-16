@@ -69,7 +69,7 @@
             {
                 "name" : "comic-detail",
                 "path" : "pages/comic-detail/comic-detail",
-                "query": "detailData={\"comic_id\":\"1\",\"title\":\"怪童\",\"chapter\":\"1\"}"
+                "query": "detailData={\"comic_id\":\"1\",\"title\":\"怪童\",\"chapter\":\"3\"}"
             }
         ]
     },

@@ -20,7 +20,7 @@
 			<text></text>
 		</view>
 
-		<view class="list" v-for="(type, i) in productData" :key="i">
+		<view class="list" v-for="(type, i) in comicData" :key="i">
 			<view class="list-header">
 				{{type.release_type_name}}
 				<view class="more" @tap="goList(type)">
@@ -28,13 +28,13 @@
 				</view>
 			</view>
 			<view class="list-body">
-				<view class="product" v-for="(product,index) in type.products" :key="index" @tap="goInfo(product)">
-					<image :src="product.cover" mode="scaleToFill" class="product-img"></image>
+				<view class="product" v-for="(comic,index) in type.comics" :key="index" @tap="goInfo(comic)">
+					<image :src="comic.cover" mode="scaleToFill" class="product-img"></image>
 					<view class="product-title uni-ellipsis">
-						{{product.title}}
+						{{comic.title}}
 					</view>
 					<view class="product-brief uni-ellipsis">
-						{{product.brief}}
+						{{comic.brief}}
 					</view>
 				</view>
 			</view>
@@ -75,7 +75,7 @@
 						title: '追更榜'
 					}
 				],
-				productData: []
+				comicData: []
 			};
 		},
 		onLoad() {
@@ -101,7 +101,7 @@
 					url: this.$requestUrl + 'get_comic_by_release',
 					method: 'GET',
 					success: res => {
-						this.productData = res.data.data;
+						this.comicData = res.data.data;
 					},
 					fail: () => {},
 					complete: () => {
@@ -120,7 +120,7 @@
 			},
 			goInfo(e) {
 				let detail = {
-					comic_id: e.id,
+					comic_id: e.comic_id,
 					title: e.title
 				}
 				uni.navigateTo({

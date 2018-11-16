@@ -7,6 +7,7 @@
         		<view class="modal-footer">
         			<button class="modal-btn btn-cancel" @tap="close">{{cancelText}}</button>
         			<button open-type="share" class="modal-btn btn-confirm">{{confirmText}}</button>
+                    <!-- <view class="note" @tap="note" v-show="noteShow"></view> -->
         		</view>
         	</view>
         </view>
@@ -16,26 +17,12 @@
 <script>
 	export default {
 		props: {
-			/**
-			 * 标题
-			 */
-			titleText: String,
-			/**
-			 * 内容
-			 */
-			contentText: String,
-			/**
-			 * 取消按钮
-			 */
-			cancelText: String,
-			/**
-			 * 确认按钮
-			 */
-			confirmText: String,
-			/**
-			 * 是否显示
-			 */
+			titleText: String, // 标题
+			contentText: String, // 内容
+			cancelText: String, // 取消按钮
+			confirmText: String, // 确认按钮
 			modalShow: String,
+            noteShow: String 
 		},
         data() {
         	return {
@@ -45,7 +32,10 @@
 		methods: {
 			close() {
 				this.$emit('close')
-			}
+			},
+            note() {
+                this.$emit('note');
+            }
 		}
 	}
 </script>
@@ -89,6 +79,7 @@
 	.modal-footer {
 		height: 100upx;
 		display: flex;
+        position: relative;
 	}
 
 	.modal-btn {
@@ -114,5 +105,14 @@
     .btn-confirm,
     .btn-confirm::after{
         border-bottom-right-radius: 8px;
+    }
+    
+    .note{
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 280upx;
+        height: 100upx;
+        z-index: 9999;
     }
 </style>

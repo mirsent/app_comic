@@ -110,6 +110,12 @@
 				}
 			}
 		},
+        onShareAppMessage() {
+        	return {
+        		title: '漫画',
+        		path: '/pages/index/index'
+        	}
+        }
 	}
 </script>
 
