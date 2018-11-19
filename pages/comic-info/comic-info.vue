@@ -13,7 +13,7 @@
         
         <view class="func">
         	<view class="func-item">
-                <view class="label" v-if="comic.is_collect">
+                <view class="label" @tap="cancelCollect" v-if="comic.is_collect == 1">
                 	<image src="../../static/image/collect_on.png" class="icon"></image>
                 	<view class="title">已收藏</view>
                 </view>
@@ -21,7 +21,7 @@
         			<image src="../../static/image/collect.png" class="icon"></image>
                     <view class="title">收藏</view>
         		</view>
-                <view class="label" v-if="comic.is_like">
+                <view class="label" @tap="cancelLike" v-if="comic.is_like == 1">
                 	<image src="../../static/image/like_on.png" class="icon"></image>
                 	<view class="title">已点赞</view>
                 </view>
@@ -142,8 +142,10 @@
         },
         onShow() {
             if (this.needShare == 1) {
+                // 达成分享条件
             	this.modalShow = false;
             } else {
+                // 改变条件显示
                 this.needShare = this.needShare-1;
                 this.contentText = '转发'+this.needShare+'名好友即可阅读';
             }
@@ -276,7 +278,6 @@
                                         // 限制阅读
                                         let comicInfo = res.data.data;
                                         _this.needShare = comicInfo.need_share;
-                                        _this.noteShow = true; // 重置note按钮状态
                                         _this.titleText = '精彩章节订阅';
                                         _this.contentText = '转发'+_this.needShare+'名好友即可阅读';
                                         _this.shareCover = comicInfo.chapter_cover; // 章节封面
@@ -316,21 +317,24 @@
                 })
             },
             like() {
-                // 点赞
                 uni.request({
                 	url: this.$requestUrl+'like',
                 	method: 'GET',
                 	data: {
                         comic_id: this.comic.comic_id,
-                        openid: this.openid
+                        openid: this.openid,
+                        channel: 2
                     },
                 	success: res => {
                         if (res.data.status == 1) {
+                            this.comic.is_like = 1;
                         	uni.showToast({
-                                icon: 'success'
+                                icon: 'none',
+                                title: '点赞成功'
                         	});
                         } else {
                             uni.showToast({
+                                icon: 'none',
                             	title: '点赞失败'
                             });
                         }
@@ -339,23 +343,78 @@
                 	complete: () => {}
                 });
             },
+            cancelLike() {
+            	uni.request({
+            		url: this.$requestUrl+'cancel_like',
+            		method: 'GET',
+            		data: {
+            			comic_id: this.comic.comic_id,
+            			openid: this.openid,
+            		},
+            		success: res => {
+            			if (res.data.status == 1) {
+                            this.comic.is_like = 0;
+            				uni.showToast({
+                                icon: 'none',
+            					title: '取消点赞'
+            				});
+            			} else {
+            				uni.showToast({
+                                icon: 'none',
+            					title: '取消点赞失败'
+            				});
+            			}
+            		},
+            		fail: () => {},
+            		complete: () => {}
+            	});
+            },
             collect() {
-                // 收藏
                 uni.request({
                 	url: this.$requestUrl+'collect',
                 	method: 'GET',
                 	data: {
                 		comic_id: this.comic.comic_id,
-                		openid: this.openid
+                		openid: this.openid,
+                        channel: 2
                 	},
                 	success: res => {
                 		if (res.data.status == 1) {
+                            this.comic.is_collect = 1;
                 			uni.showToast({
-                				icon: 'success'
+                                icon: 'none',
+                				title: '收藏成功'
                 			});
                 		} else {
                 			uni.showToast({
+                                icon: 'none',
                 				title: '收藏失败'
+                			});
+                		}
+                	},
+                	fail: () => {},
+                	complete: () => {}
+                });
+            },
+            cancelCollect() {
+                uni.request({
+                	url: this.$requestUrl+'cancel_collect',
+                	method: 'GET',
+                	data: {
+                		comic_id: this.comic.comic_id,
+                		openid: this.openid,
+                	},
+                	success: res => {
+                		if (res.data.status == 1) {
+                            this.comic.is_collect = 0;
+                			uni.showToast({
+                                icon: 'none',
+                				title: '取消收藏'
+                			});
+                		} else {
+                			uni.showToast({
+                                icon: 'none',
+                				title: '取消收藏失败'
                 			});
                 		}
                 	},

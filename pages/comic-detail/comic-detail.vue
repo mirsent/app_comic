@@ -60,7 +60,19 @@
 			this.get_chapter();
 		},
         onShow() {
-        	this.modalShow = false;
+        	if (this.needShare == 1) {
+        		// 达成分享条件
+        		this.modalShow = false;
+        	} else {
+        		// 改变条件显示
+        		this.needShare = this.needShare-1;
+        		this.contentText = '转发'+this.needShare+'名好友即可阅读';
+        	}
+        },
+        onHide() {
+        	if (this.modalShow) {
+        		this.noteShare();
+        	}
         },
 		methods: {
             noteShare(){
@@ -140,9 +152,9 @@
 						if (res.data.status == '-1') {
                             // 限制阅读
                             let comicInfo = res.data.data;
-                            this.noteShow = true; // 重置note按钮状态
+                            this.needShare = comicInfo.need_share;
 							this.titleText = '精彩章节订阅';
-							this.contentText = '转发'+comicInfo.need_share+'名好友即可阅读';
+							this.contentText = '转发'+this.needShare+'名好友即可阅读';
                             this.shareCover = comicInfo.chapter_cover; // 章节封面
                             this.shareChapter = parseInt(chapter)+1; // 需要解除限制的章节
 							this.modalShow = true;
